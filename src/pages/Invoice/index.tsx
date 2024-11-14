@@ -12,8 +12,11 @@ import { BillFE } from "../../types/bill";
 import { renderToString } from "react-dom/server";
 import jsPDF from "jspdf";
 import JSZip from "jszip";
+import { useLocation, useOutletContext } from "react-router-dom";
+import { useEffect } from "react";
+import { stepperContextFnType } from "../../types/types";
 
-type fieldType = {
+export type fieldType = {
     gstNo: string,
     serialNo: number,
     billPerDay: number,
@@ -21,8 +24,26 @@ type fieldType = {
     endDate: Date
 }
 
-export default function InvoiceHome() {
-    const { register, getValues } = useForm<fieldType>();
+export default function InvoiceHome({value}: {value?: fieldType}) {
+    const [stepperContextFn] = useOutletContext<[stepperContextFnType]>();
+    const {state} = useLocation();
+    const formValue = state && state.value ? state.value : value;
+    const { register, getValues, formState: { isValid }, watch } = useForm<fieldType>({
+        defaultValues: {
+            gstNo: formValue?.gstNo || '',
+            serialNo: formValue?.serialNo || undefined,
+            billPerDay: formValue?.billPerDat || undefined,
+            startDate: formValue?.startDate || undefined,
+            endDate: formValue?.endDate || undefined
+        }
+    });
+    const watchAll = watch();
+    useEffect(() => {
+        if (stepperContextFn && typeof stepperContextFn === 'function') {
+            stepperContextFn(isValid, watchAll)
+        }
+    }, [isValid, stepperContextFn, watchAll]);
+
     async function generateZip(values: BillFE[]) {
         const zipContent: Array<{
             name: string,
@@ -104,7 +125,10 @@ export default function InvoiceHome() {
                     <TextInput id="gstNo" 
                      placeholder="ABGXXXXX"
                      {
-                        ...register('gstNo')
+                        ...register('gstNo', {
+                            required: true,
+                            minLength: 10
+                        })
                      }
                      />
                     <InputError />

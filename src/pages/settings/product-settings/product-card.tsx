@@ -10,18 +10,12 @@ import { ProductSettingsMode, ProductSettingsType } from "./constant"
 import { Products } from "../../../types/settings"
 import { NumberInput } from "../../../components/ui/input-number"
 import uuid from 'uuid-random';
+import { productCardValues } from "../types"
 
 type props = {
     type: ProductSettingsType,
     product?: Products,
     onSave: (product: Products) => void
-}
-
-type fieldValueType = {
-    productName: string,
-    hsnCode: number,
-    rate: number,
-    qty: QuantityType
 }
 
 export default function ProductCard({type = ProductSettingsType.CARD, product, onSave}: props) {
@@ -33,7 +27,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
         reset,
         setValue,
         formState: { isDirty, dirtyFields },
-        setFocus} = useForm<fieldValueType>({
+        setFocus} = useForm<productCardValues>({
         defaultValues: {
             productName: product ? product.description : '',
             hsnCode: product ? product.hsnCode : undefined,
