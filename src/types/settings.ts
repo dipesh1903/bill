@@ -16,8 +16,7 @@ export interface Products {
     hsnCode: number,
     qtyType: QuantityType,
     rate: number,
-    cgst: number,
-    sgst: number
+    id: string
 }
 
 export interface RangeSet {

@@ -34,7 +34,8 @@ export function generateBill(settings: InvoiceSettings): BillDetails[]  {
                 qtyType: product.qtyType,
                 description: product.description,
                 hsnCode: product.hsnCode,
-                rate: product.rate
+                rate: product.rate,
+                id: product.id
             })
             productCount--;
         }

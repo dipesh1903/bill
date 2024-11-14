@@ -17,6 +17,10 @@ export default {
         'interactive-low': '#E9ECEF',
         'interactive-medium': '#DEE2E6',
         'interactive-high': '#CED4DA',
+      },
+      boxShadow: {
+        'product-cards': 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
+        'product-cards-edit': 'red 0px 1px 4px',
       }
     },
   },
