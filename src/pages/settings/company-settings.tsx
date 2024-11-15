@@ -57,11 +57,11 @@ export default function CompanySettings({value, stepperContextFns}: {value?: com
                         required: true
                     })
                 }
-                className={cn("w-full  h-12 p-2 border-2 rounded-lg border-black", {'ring-2 ring-outline-medium': open})}
+                className={cn("w-full  h-10 p-2 border-2 rounded-lg border-black", {'ring-2 ring-outline-medium': open})}
                 onClick={() => setOpen(true)} />
                 <DropdownRoot open={open} onOpenChange={setOpen}>
                     <DropdownTrigger asChild>
-                        <div className={cn("w-full p-2 h-12 border-2 rounded-lg border-black absolute top-0 invisible")}>Open dropdown okay</div>
+                        <div className={cn("w-full p-2 h-10 border-2 rounded-lg border-black absolute top-0 invisible")}>Open dropdown okay</div>
                     </DropdownTrigger>
                     <DropdownContent className="p-2 hover:cursor-pointer max-h-72 max-w-72 bg-surface-low rounded-lg shadow-lg overflow-scroll" >
                         {

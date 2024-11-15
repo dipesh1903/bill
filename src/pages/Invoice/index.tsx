@@ -159,7 +159,7 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
                 </div>
                 <div className="flex flex-col flex-1">
                     <InputLabel>Bill per day</InputLabel>
-                    <NumberInput placeholder="23"
+                    <NumberInput placeholder="2"
                     {
                         ...register('billPerDay')
                     } />
@@ -169,14 +169,18 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             <div className="flex flex-row gap-4">
                 <div className="flex flex-col flex-1">
                     <InputLabel>Start Date</InputLabel>
-                    <DatePicker                    {
+                    <DatePicker
+                    onClick={(e) => e.currentTarget.showPicker()}
+                    {
                         ...register('startDate')
                     } />
                     <InputError />
                 </div>
                 <div className="flex flex-col flex-1">
                     <InputLabel>End Date</InputLabel>
-                    <DatePicker                    {
+                    <DatePicker         
+                    onClick={(e) => e.currentTarget.showPicker() }           
+                    {
                         ...register('endDate')
                     }/>
                     <InputError />
