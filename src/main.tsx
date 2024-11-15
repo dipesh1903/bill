@@ -4,10 +4,14 @@ import './index.css'
 import App from './App.tsx'
 import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { StorageContext } from './store/storageContext.tsx';
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <StorageContext>
+      <App />
+    </StorageContext>
     <ToastContainer
       position="top-right"
       autoClose={5000}

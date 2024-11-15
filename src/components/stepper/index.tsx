@@ -9,19 +9,31 @@ import ProductSettings from "../../pages/settings/product-settings";
 import InvoiceHome, { fieldType } from "../../pages/Invoice";
 import { companySettingsForm } from "../../pages/settings/types";
 import { Products } from "../../types/settings";
+import { useContextDispatch, useContextStore } from "../../store/storageContext";
 
 export default function Stepper() {
-
+    const dispatch = useContextDispatch();
+    const useStorage = useContextStore();
     const [activeStepper , setActiveStepper] = useState(1);
     const [isValid , setIsValid] = useState(false);
-    const formValues = useRef<{[key: string]: stepperValues}>({});
+    const formValues = useRef<{[key: string]: stepperValues}>({
+        1: useStorage?.companySettings || {},
+        2: useStorage?.products || []
+    });
+
     function onClick(index: number) {
         if (index > activeStepper && !isValid) return;
+        if (dispatch && typeof dispatch === 'function') {
+            dispatch((prev) => ({
+                    ...prev,
+                    companySettings: formValues.current[1] as companySettingsForm,
+                    products: formValues.current[2] as Products[]
+                }))
+        }
         setActiveStepper(index);
     }
 
     function onActionComplete() {
-        formValues.current = {};
         setActiveStepper(1);
         setIsValid(false);
     }
