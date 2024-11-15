@@ -92,7 +92,7 @@ export const STATES = [
     "CENTRE JURISDICTION"
 ]
 
-export const STATE_CODE = {
+export const STATE_CODE: {[x: string]: string} = {
     "JAMMU AND KASHMIR": "01",
     "HIMACHAL PRADESH": "02",
     "PUNJAB": "03",

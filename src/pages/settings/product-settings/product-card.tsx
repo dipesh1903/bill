@@ -185,10 +185,10 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                 }
                 {
                     mode === ProductSettingsMode.EDIT && <PrimaryButton
-                    onClick={() => reset()}
+                    onClick={() => { setMode(ProductSettingsMode.VIEW); reset()}}
                     >Cancel</PrimaryButton>
                 }
-                {isDirty && <PrimaryButton className="w-[50%]" onClick={saveProduct}>Save changes</PrimaryButton>}
+                {isDirty && mode === ProductSettingsMode.EDIT && <PrimaryButton className="w-[50%]" onClick={saveProduct}>Save changes</PrimaryButton>}
             </div>
         </div>
     )

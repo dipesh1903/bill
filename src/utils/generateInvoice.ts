@@ -11,6 +11,7 @@ export function generateInvoices(
     billPerDay: RangeSet,
     companyInfo: companyInfo,
     invoiceSettings: InvoiceSettings,
+    gstNo: string,
     address?: string,
 ): BillFE[] {
 
@@ -28,6 +29,7 @@ export function generateInvoices(
                 date: dateTrack.toDate(),
                 name: invoiceSettings.customerNames[getRandomInteger({min: 0, max: invoiceSettings.customerNames.length - 1})],
                 bill,
+                gstNo,
                 address,
                 ...companyInfo
             })

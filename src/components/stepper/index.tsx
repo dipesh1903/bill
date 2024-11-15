@@ -12,33 +12,19 @@ import { Products } from "../../types/settings";
 
 export default function Stepper() {
 
-    // const navigate = useNavigate();
     const [activeStepper , setActiveStepper] = useState(1);
     const [isValid , setIsValid] = useState(false);
-    // const location = useLocation();
     const formValues = useRef<{[key: string]: stepperValues}>({});
-    console.log(formValues.current[2]);
     function onClick(index: number) {
         if (index > activeStepper && !isValid) return;
         setActiveStepper(index);
-        // navigate(stepConfig[index - 1].navigate, {
-        //     state: {
-        //         value: formValues.current[String(index)]
-        //     }
-        // })
     }
 
-    // useEffect(() => {
-    //     console.log(location.pathname);
-    //     const stepperIndex = stepConfig.findIndex(item => item.navigate === location.pathname) + 1;
-    //     console.log(stepperIndex);
-    //     if (stepperIndex > activeStepper && !isValid) {
-    //         console.log('here');
-    //         navigate(-1);
-    //     } else {
-    //         setActiveStepper(stepperIndex);
-    //     }
-    // }, [activeStepper, isValid, location, navigate])
+    function onActionComplete() {
+        formValues.current = {};
+        setActiveStepper(1);
+        setIsValid(false);
+    }
 
     function stepperContextFn(isValid: boolean, values: stepperValues) {
         setIsValid(isValid)
@@ -50,7 +36,6 @@ export default function Stepper() {
                 }
             }
         }
-        console.log(formValues.current[2]);
     }
 
     return(
@@ -74,6 +59,7 @@ export default function Stepper() {
                     activeStepper === 1 ? <CompanySettings value={formValues.current[1] as companySettingsForm} stepperContextFns={stepperContextFn}/> :
                     activeStepper === 2 ? <ProductSettings value={(formValues.current[2] || []) as Products[]} stepperContextFns={stepperContextFn}/> :
                     activeStepper === 3 ? <InvoiceHome
+                    onAction={onActionComplete}
                     value={formValues.current[3] as fieldType}
                     stepperContextFns={stepperContextFn}
                     companySetting={formValues.current[1] as companySettingsForm}

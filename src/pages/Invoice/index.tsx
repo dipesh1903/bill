@@ -17,19 +17,20 @@ import { useEffect } from "react";
 import { stepperContextFnType } from "../../types/types";
 import { companySettingsForm } from "../settings/types";
 import { Products } from "../../types/settings";
+import { toast } from "react-toastify";
 
 export type fieldType = {
     gstNo: string,
     serialNo: number,
     billPerDay: number,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
 }
 
-export default function InvoiceHome({value, stepperContextFns, companySetting, products}: {value?: fieldType,
+export default function InvoiceHome({value, stepperContextFns, companySetting, products, onAction}: {value?: fieldType,
     stepperContextFns?: stepperContextFnType,
     companySetting: companySettingsForm,
-    products: Products[]}) {
+    products: Products[], onAction: () => void}) {
     const stepperContextFn = useOutletContext<[stepperContextFnType]>();
     const {state} = useLocation();
     const formValue = state && state.value ? state.value : value;
@@ -37,7 +38,7 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
         defaultValues: {
             gstNo: formValue?.gstNo || '',
             serialNo: formValue?.serialNo || undefined,
-            billPerDay: formValue?.billPerDat || undefined,
+            billPerDay: formValue?.billPerDay || undefined,
             startDate: formValue?.startDate || undefined,
             endDate: formValue?.endDate || undefined
         }
@@ -57,7 +58,7 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             content: Blob
         }> = [];
         for await (const bill of values) {
-            const content = renderToString(<TemplateBasic billDetails={bill.bill} cgst={companySetting.cgst} sgst={companySetting.sgst} />) 
+            const content = renderToString(<TemplateBasic companyInfo={companySetting} billDetails={bill.bill} bill={bill} cgst={companySetting.cgst} sgst={companySetting.sgst} />) 
             const doc = new jsPDF({
                 unit: 'px',
                 format: 'a4',
@@ -67,9 +68,10 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             x: 20,
             y: 20,
             })
+            let index = 0
             const cc = doc.output('blob');
             zipContent.push({
-                name: `${Math.random()}-file.pdf`,
+                name: `bill-${index++}.pdf`,
                 content: cc
             }) 
         };
@@ -89,10 +91,9 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
                 zip.generateAsync({
                     type: "blob"
                 }).then(function (content) {
-                    // Create a download link
                     const link = document.createElement("a");
                     link.href = URL.createObjectURL(content);
-                    link.download = "my-files.zip";
+                    link.download = `cash-Bill${Math.floor(Math.random() * 100)}.zip`;
                     link.click();
                     URL.revokeObjectURL(link.href);
                 });
@@ -101,6 +102,8 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
         for (let i = 0; i < totalFiles; i++) {
             addFileToZip(i);
         }
+        toast.success('Bills downloaded successfully')
+        onAction();
 
     }
 
@@ -109,7 +112,8 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             serialNo,
             startDate,
             endDate,
-            billPerDay
+            billPerDay,
+            gstNo
         } = getValues();
 
         generateZip(generateInvoices(
@@ -124,7 +128,8 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             {
                 ...invoiceSetting,
                 products: products
-            }
+            },
+            gstNo,
         ))
     }
         

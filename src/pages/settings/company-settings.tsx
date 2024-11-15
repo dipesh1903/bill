@@ -22,7 +22,9 @@ export default function CompanySettings({value, stepperContextFns}: {value?: com
             companyName: formValue?.companyName || '',
             state: formValue?.state || '',
             district: formValue?.district || '',
-            city: formValue?.city || ''
+            city: formValue?.city || '',
+            cgst: formValue?.cgst || undefined,
+            sgst: formValue?.sgst || undefined
         }
     })
     const stepperContextFn = useOutletContext<[stepperContextFnType]>();
