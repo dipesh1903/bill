@@ -27,7 +27,7 @@ export default function TemplateBasic(props: props) {
             </div>
             <div className="flex flex-col">
                 <div>Name:<span className="pl-2">{bill.name}</span></div>
-                <div className=" pb-2">Address<span className="pl-2">{bill.address}</span></div>
+                <div className=" pb-2">Address:<span className="pl-2">{bill.district}</span></div>
                 <div className="flex flex-row">
                 <div className="flex flex-col gap-2">
                     <div>State:<span className="pl-2">{companyInfo.state.toLowerCase()}</span></div>
