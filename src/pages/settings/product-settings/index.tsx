@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PrimaryButton } from "../../../components/ui/button";
 import { Products } from "../../../types/settings";
 import { ProductSettingsType } from "./constant";
@@ -6,15 +6,31 @@ import ProductCard from "./product-card";
 import { useLocation, useOutletContext } from "react-router-dom";
 import { stepperContextFnType } from "../../../types/types";
 
-export default function ProductSettings({value}: {value?: Products[]}) {
+export default function ProductSettings({value, stepperContextFns}: {value?: Products[], stepperContextFns?: stepperContextFnType}) {
+    console.log('product values is ', value);
     const { state } = useLocation();
-    console.log('state is ', state);
-    const [products , setProducts] = useState<Products[]>(state && state.value ? state.value : (value || []));
+    const [products , setProducts] = useState<Products[]>(() => {
+    return state && state.value ? (state.value || []) : (value ? value : [])
+    });
     const [showCard, setShowCard] = useState(false);
-    const [stepperContextFn] = useOutletContext<[stepperContextFnType]>();
-    function onSave(product: Products) {
-        setProducts([...products, product]);
-        stepperContextFn(true, [...products, product]);
+    const stepperContextFn = useOutletContext<[stepperContextFnType]>();
+
+    useEffect(() => {
+        if (stepperContextFn && stepperContextFn[0] && typeof stepperContextFn[0] === 'function') {
+            stepperContextFn[0](!!products.length, products);
+        } else if (stepperContextFns && typeof stepperContextFns === 'function') {
+            stepperContextFns(!!products.length, products);
+        }
+    }, [products, stepperContextFn, stepperContextFns])
+
+    function onSave(product: Products, index?: number) {
+        if (index || index === 0) {
+            const result = [...products]
+            result[index] = product;
+            setProducts([...result]);
+        } else {
+            setProducts([...products, product]);
+        }
         setShowCard(false);
     }
 
@@ -26,13 +42,13 @@ export default function ProductSettings({value}: {value?: Products[]}) {
                 onSave={onSave}/></div>
             }
             {
-                products.map(product => (
+                products.map((product, index) => (
                     <div
                         key={product.id} 
                         className="my-2">
                         <ProductCard type={ProductSettingsType.CARD}
                         product={product}
-                        onSave={onSave}/>
+                        onSave={(product: Products) => onSave(product, index)}/>
                     </div>
                 ))
             }

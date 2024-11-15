@@ -1,47 +1,42 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import InvoiceHome from "../pages/Invoice";
 import Settings from "../pages/settings";
 import CompanySettings from "../pages/settings/company-settings";
 import ProductSettings from "../pages/settings/product-settings";
 import Stepper from "../components/stepper";
+import HomePage from "../pages/Home";
 
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <Stepper />,
-        children: [
-            {
-                path: 'invoice',
-                element: <InvoiceHome />
-            },
-            {
-                path: 'company',
-                element: <CompanySettings />
-            },
-            {
-                path: 'product',
-                element: <ProductSettings />
-            }
-        ]
-    },
-    {   
-        path: 'settings',
-        element: <Settings />,
+        element: <HomePage/>,
         children: [
             {
                 index: true,
-                element: <Navigate replace to="company" />
+                element: <Navigate replace to={'bill'} />
             },
             {
-                path: 'company',
-                element: <CompanySettings />
+                path: 'bill',
+                element: <Stepper />,
             },
-            {
-                path: 'product',
-                element: <ProductSettings />
-            }
+            {   
+                path: 'settings',
+                element: <Settings />,
+                children: [
+                    {
+                        index: true,
+                        element: <Navigate replace to="company" />
+                    },
+                    {
+                        path: 'company',
+                        element: <CompanySettings />
+                    },
+                    {
+                        path: 'product',
+                        element: <ProductSettings />
+                    }
                 ]
             }
         ]
+    }]
 
 )

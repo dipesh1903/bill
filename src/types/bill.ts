@@ -1,5 +1,5 @@
-import { QuantityType } from "../constant";
-import { companyInfo, Products } from "./settings";
+import { productCardValues } from "../pages/settings/types";
+import { companyInfo } from "./settings";
 
 export interface BillFE extends Omit<companyInfo, 'displayName' | 'id'>{
     serialNo: number,
@@ -10,10 +10,7 @@ export interface BillFE extends Omit<companyInfo, 'displayName' | 'id'>{
     bill: BillDetails[],
 }
 
-export interface BillDetails extends Omit<Products, 'cgst' | 'sgst'> {
-    qty: number,
-    qtyType: QuantityType,
-    description: string,
-    hsnCode: number,
-    rate: number,
+export interface BillDetails extends productCardValues {
+    quantity: number,
+    id?: string
 }

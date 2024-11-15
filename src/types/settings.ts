@@ -1,8 +1,8 @@
-import { QuantityType, RangeType } from "../constant"
+import { RangeType } from "../constant"
+import { productCardValues } from "../pages/settings/types"
 
 export interface InvoiceSettings {
-    id: string,
-    displayName: string,
+    id?: string,
     customerNames: string[],
     address: string[],
     products: Products[],
@@ -11,12 +11,8 @@ export interface InvoiceSettings {
     productPerInvoiceRange: RangeSet,
 }
 
-export interface Products {
-    description: string,
-    hsnCode: number,
-    qtyType: QuantityType,
-    rate: number,
-    id: string
+export interface Products extends productCardValues {
+    id?: string
 }
 
 export interface RangeSet {
@@ -31,9 +27,10 @@ export interface companySettings extends companyInfo {
 
 export interface companyInfo {
     state: string,
-    stateCode: number,
     cgst: number,
     sgst: number,
-    displayName: string,
-    id: string
+    companyName: string,
+    city: string,
+    district: string
+    id?: string
 }

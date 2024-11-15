@@ -4,10 +4,12 @@ export type companySettingsForm = {
     companyName: string,
     state: string,
     district: string,
-    city: string
+    city: string,
+    cgst: number,
+    sgst: number
 }
 
-export type productCardValues = {
+export interface productCardValues {
     productName: string,
     hsnCode: number,
     rate: number,

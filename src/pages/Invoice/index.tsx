@@ -6,7 +6,7 @@ import { InputLabel } from "../../components/ui/input-label";
 import { NumberInput } from "../../components/ui/input-number";
 import { TextInput } from "../../components/ui/input-string";
 import { generateInvoices } from "../../utils/generateInvoice";
-import { companyDetails, invoiceSetting } from "../../constant";
+import { invoiceSetting } from "../../constant";
 import TemplateBasic from "../../components/billTemplates/template-basic";
 import { BillFE } from "../../types/bill";
 import { renderToString } from "react-dom/server";
@@ -15,6 +15,8 @@ import JSZip from "jszip";
 import { useLocation, useOutletContext } from "react-router-dom";
 import { useEffect } from "react";
 import { stepperContextFnType } from "../../types/types";
+import { companySettingsForm } from "../settings/types";
+import { Products } from "../../types/settings";
 
 export type fieldType = {
     gstNo: string,
@@ -24,8 +26,11 @@ export type fieldType = {
     endDate: Date
 }
 
-export default function InvoiceHome({value}: {value?: fieldType}) {
-    const [stepperContextFn] = useOutletContext<[stepperContextFnType]>();
+export default function InvoiceHome({value, stepperContextFns, companySetting, products}: {value?: fieldType,
+    stepperContextFns?: stepperContextFnType,
+    companySetting: companySettingsForm,
+    products: Products[]}) {
+    const stepperContextFn = useOutletContext<[stepperContextFnType]>();
     const {state} = useLocation();
     const formValue = state && state.value ? state.value : value;
     const { register, getValues, formState: { isValid }, watch } = useForm<fieldType>({
@@ -39,10 +44,12 @@ export default function InvoiceHome({value}: {value?: fieldType}) {
     });
     const watchAll = watch();
     useEffect(() => {
-        if (stepperContextFn && typeof stepperContextFn === 'function') {
-            stepperContextFn(isValid, watchAll)
+        if (stepperContextFn && stepperContextFn[0] && typeof stepperContextFn[0] === 'function') {
+            stepperContextFn[0](isValid, watchAll)
+        } else if (stepperContextFns && typeof stepperContextFns === 'function') {
+            stepperContextFns(isValid, watchAll)
         }
-    }, [isValid, stepperContextFn, watchAll]);
+    }, [isValid, stepperContextFn, stepperContextFns, watchAll]);
 
     async function generateZip(values: BillFE[]) {
         const zipContent: Array<{
@@ -50,7 +57,7 @@ export default function InvoiceHome({value}: {value?: fieldType}) {
             content: Blob
         }> = [];
         for await (const bill of values) {
-            const content = renderToString(<TemplateBasic billDetails={bill.bill} cgst={9} sgst={9} />) 
+            const content = renderToString(<TemplateBasic billDetails={bill.bill} cgst={companySetting.cgst} sgst={companySetting.sgst} />) 
             const doc = new jsPDF({
                 unit: 'px',
                 format: 'a4',
@@ -113,8 +120,11 @@ export default function InvoiceHome({value}: {value?: fieldType}) {
                 max: billPerDay,
                 min:billPerDay
             },
-            companyDetails,
-            invoiceSetting
+            companySetting,
+            {
+                ...invoiceSetting,
+                products: products
+            }
         ))
     }
         

@@ -22,30 +22,31 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
     const [open , setOpen] = useState(false);
     const [mode , setMode] = useState(type === ProductSettingsType.CARD ?  ProductSettingsMode.VIEW : ProductSettingsMode.EDIT);
     const [displayValue, dispatch] = useReducer(reducer, initValue);
-
     const {register, getValues,
         reset,
         setValue,
-        formState: { isDirty, dirtyFields },
+        formState: { isDirty, dirtyFields, isValid },
         setFocus} = useForm<productCardValues>({
         defaultValues: {
-            productName: product ? product.description : '',
+            productName: product ? product.productName : '',
             hsnCode: product ? product.hsnCode : undefined,
             rate: product ? product.rate : undefined,
-            qty: product ? product.qtyType : QuantityType.KG
+            qty: product ? product.qty : QuantityType.KG
         }
     })
 
     function saveProduct() {
+        if (!isValid) return;
         const result: Products = {
             ...product,
-            description: getValues().productName,
+            productName: getValues().productName,
             rate: getValues().rate,
-            qtyType: getValues().qty,
+            qty: getValues().qty,
             hsnCode: getValues().hsnCode,
             id: product && product.id ? product.id : uuid()
         }
         onSave(result);
+        setMode(ProductSettingsMode.VIEW)
     }
 
     return (
@@ -67,12 +68,14 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                 }
                 className={cn(
                     "bg-surface-low mb-2 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light w-full",
-                    {'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.productName}
+                    {'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.productName && mode === ProductSettingsMode.EDIT}
                     )}>
                     {getValues().productName ||  'My product'}</div>
                 <TextInput
                 {
-                    ...register('productName')
+                    ...register('productName', {
+                        required: 'Cannot be empty'
+                    })
                 }
                 onBlur={() => dispatch({
                     type: 'NAME',
@@ -83,7 +86,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                 autoFocus
                 />
             </div>
-            <div className="flex flex-row gap-4">
+            <div className="flex flex-row gap-4 pt-4">
                 <div className="relative">
                     <div onClick={() => {
                         if (mode === ProductSettingsMode.EDIT) {
@@ -96,15 +99,17 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                         });
                         } }} 
                         className={cn(
-                            "bg-surface-low mb-2 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light w-full",
-                            {'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.hsnCode}
+                            "bg-surface-low w-24 mb-2 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light",
+                            {'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.hsnCode && mode === ProductSettingsMode.EDIT}
                             )}>
                             {getValues().hsnCode ||  'HSN NO.'}</div>
                         <NumberInput
                             {
-                                ...register('hsnCode')
+                                ...register('hsnCode', {
+                                    required: 'Cannot be empty'
+                                })
                             }
-                            className={cn("absolute top-0 flex-1 max-w-64", {'invisible': !displayValue.showHSNInput})}
+                            className={cn("absolute top-0 flex-1 w-24", {'invisible': !displayValue.showHSNInput})}
                             placeholder="HSN"
                             onBlur={() => dispatch({
                                 type: 'HSN',
@@ -123,15 +128,17 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                                 setFocus('rate')
                         }); }}} 
                         className={cn(
-                            "bg-surface-low mb-2 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light w-full",
-                            {'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.rate}
+                            "bg-surface-low mb-2 w-20 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light",
+                            {'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.rate && mode === ProductSettingsMode.EDIT}
                             )}>
                             {getValues().rate ||  'Rate'}</div>
                         <NumberInput
                             {
-                                ...register('rate')
+                                ...register('rate', {
+                                    required: 'Cannot be empty'
+                                })
                             }
-                            className={cn("flex-1 absolute top-0 max-w-64", {'invisible': !displayValue.showRateInput})}
+                            className={cn("flex-1 absolute top-0 w-20", {'invisible': !displayValue.showRateInput})}
                             placeholder="Rate"
                             onBlur={() => dispatch({
                                 type: 'RATE',
@@ -139,13 +146,13 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                             })}
                             />
                 </div>
-                <div className="flex-1 relative max-w-20 h-full ring-2 ring-outline-high">
+                <div className="flex-1 relative max-w-20">
                     <TextInput
                     {
                         ...register('qty')
                     }
-                    className={cn("w-full  h-full p-2 border-2 rounded-lg border-black",
-                        {'ring-2 ring-outline-low': open, 'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.qty })}
+                    className={cn("w-full  h-fit p-2 border-2 rounded-lg border-black",
+                        {'ring-2 ring-outline-low': open, 'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.qty  && mode === ProductSettingsMode.EDIT})}
                         onClick={() => setOpen(true)} />
                     <DropdownRoot open={open && mode === ProductSettingsMode.EDIT} onOpenChange={setOpen}>
                         <DropdownTrigger asChild>
@@ -166,12 +173,12 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
             <div className="flex gap-4 mt-4">
                 { type === ProductSettingsType.CARD &&
                 <PrimaryButton className="w-[50%] " onClick={() => {
-                    setMode(ProductSettingsMode.EDIT)
                     dispatch({
                         type: 'NAME',
                         value: true
                     })
                     setTimeout(() => {
+                        setMode(ProductSettingsMode.EDIT)
                         setFocus('productName')
                 }); 
                     }}>Edit</PrimaryButton>

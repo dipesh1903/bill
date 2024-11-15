@@ -26,13 +26,13 @@ export function generateBill(settings: InvoiceSettings): BillDetails[]  {
             const product = products[getRandomInteger({min: 0, max: products.length - 1})];
             let newQty = getRandomInteger(rangeValue) 
             while(newQty === qty ) {
-                newQty = product.qtyType === QuantityType.PCS ? getRandomInteger(rangeValue) : getRandomDecimal(rangeValue, 1)
+                newQty = product.qty === QuantityType.PCS ? getRandomInteger(rangeValue) : getRandomDecimal(rangeValue, 1)
             }
             qty = newQty
             result.push({
-                qty,
-                qtyType: product.qtyType,
-                description: product.description,
+                quantity: qty,
+                qty: product.qty,
+                productName: product.productName,
                 hsnCode: product.hsnCode,
                 rate: product.rate,
                 id: product.id

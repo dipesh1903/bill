@@ -7,7 +7,7 @@ type props = {
 }
 
 export default function BillTable({billDetails, cgst, sgst}: props) {
-    let totalRef = billDetails.reduce((acc, bill) => acc + (Math.round(bill.qty * bill.rate) * 100 / 100), 0)
+    let totalRef = billDetails.reduce((acc, bill) => acc + (Math.round(+bill.quantity * +bill.rate) * 100 / 100), 0)
     
     const sgstAmt = Math.round((sgst / 100)*totalRef * 100) / 100;
     const cgstAmt = Math.round((cgst / 100)*totalRef * 100) / 100;
@@ -23,7 +23,7 @@ export default function BillTable({billDetails, cgst, sgst}: props) {
         <>
         <table className="border-2 border-black w-[700px] text-sm">
         <tr className="text-[10px]">
-            <th className="border-black  border-2 border-l-0 px-6 py-2">QTY 2</th>
+            <th className="border-black  border-2 border-l-0 px-6 py-2">QTY</th>
             <th className="border-black  border-2  border-l-0 px-10 py-2 flex-1">DESCRIPTION ITEMS</th>
             <th className="border-black  border-2 border-l-0 px-3 py-2">HSN CODE</th>
             <th className="border-black  border-2 border-l-0 px-1 py-2">RATE</th>
@@ -31,11 +31,11 @@ export default function BillTable({billDetails, cgst, sgst}: props) {
         </tr>
         {
             billDetails.map((bill, index) => { 
-                const [rupees, paisa] = getAmountAndPaisa(bill.rate * bill.qty);
+                const [rupees, paisa] = getAmountAndPaisa(+bill.rate * +bill.quantity);
                 return (
                 <tr key={index} className="">
-                    <td className="border-black whitespace-nowrap  border-r-2 px-6 py-2">{bill.qty}<span>{bill.qtyType}</span></td>
-                    <td className="border-black  border-r-2 px-6 py-2 flex-1">{bill.description}</td>
+                    <td className="border-black whitespace-nowrap  border-r-2 px-6 py-2">{bill.quantity}<span>{bill.qty}</span></td>
+                    <td className="border-black  border-r-2 px-6 py-2 flex-1">{bill.productName}</td>
                     <td className="border-black whitespace-nowrap  border-r-2 px-3 py-2">{bill.hsnCode}</td>
                     <td className="border-black whitespace-nowrap  border-r-2 px-1 py-2">{bill.rate}</td>
                     <td className="border-black whitespace-nowrap  border-r-2  px-6 py-2">{rupees}</td>

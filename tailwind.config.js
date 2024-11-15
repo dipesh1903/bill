@@ -20,7 +20,8 @@ export default {
       },
       boxShadow: {
         'product-cards': 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
-        'product-cards-edit': 'red 0px 1px 4px',
+        'product-cards-edit': '#4381C1 0px 0px 12px',
+        'step-border-inset': '0 0 0 3px #f3f5f6 inset'
       }
     },
   },
