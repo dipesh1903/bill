@@ -7,7 +7,6 @@ import { useLocation, useOutletContext } from "react-router-dom";
 import { stepperContextFnType } from "../../../types/types";
 
 export default function ProductSettings({value, stepperContextFns}: {value?: Products[], stepperContextFns?: stepperContextFnType}) {
-    console.log('product values is ', value);
     const { state } = useLocation();
     const [products , setProducts] = useState<Products[]>(() => {
     return state && state.value ? (state.value || []) : (value ? value : [])

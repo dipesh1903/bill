@@ -32,10 +32,8 @@ export default function CompanySettings({value, stepperContextFns}: {value?: com
 
     useEffect(() => {
         if (stepperContextFn && stepperContextFn[0] && typeof stepperContextFn[0] === 'function') {
-            console.log(watchAll)
             stepperContextFn[0](isValid, watchAll)
         } else if (stepperContextFns && typeof stepperContextFns === 'function') {
-            console.log(watchAll)
             stepperContextFns(isValid, watchAll)
         } 
     }, [stepperContextFn, stepperContextFns, isValid, watchAll]);
