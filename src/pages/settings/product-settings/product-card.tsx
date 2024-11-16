@@ -52,7 +52,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
     }
 
     return (
-        <div className={cn("p-4 rounded-lg", {"shadow-product-cards-edit" : mode === ProductSettingsMode.EDIT,
+        <div className={cn("p-4 rounded-lg bg-white", {"shadow-product-cards-edit" : mode === ProductSettingsMode.EDIT,
             "shadow-product-cards": mode !== ProductSettingsMode.EDIT
         })}>
             {type === ProductSettingsType.FORM && <div onClick={() => onSave()} className="flex justify-self-end hover:bg-surface-high hover:cursor-pointer p-2 rounded-full"><Cross1Icon/></div> }
