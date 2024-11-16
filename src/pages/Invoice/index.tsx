@@ -26,6 +26,7 @@ export type fieldType = {
     billPerDay: number,
     startDate: Date,
     endDate: Date,
+    signature: string
 }
 
 export default function InvoiceHome({value, stepperContextFns, companySetting, products, onAction}: {value?: fieldType,
@@ -41,7 +42,8 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             serialNo: formValue?.serialNo || undefined,
             billPerDay: formValue?.billPerDay || undefined,
             startDate: formValue?.startDate || undefined,
-            endDate: formValue?.endDate || undefined
+            endDate: formValue?.endDate || undefined,
+            signature: formValue?.signature || undefined
         }
     });
     const watchAll = watch();
@@ -60,7 +62,9 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
         }> = [];
         for await (const bill of values) {
             const content = renderToString(<TemplateBasic companyInfo={companySetting}
-                billDetails={bill} cgst={companySetting.cgst} sgst={companySetting.sgst} />) 
+                billDetails={bill} cgst={companySetting.cgst}
+                sgst={companySetting.sgst}
+                signature={getValues().signature}/>) 
             const doc = new jsPDF({
                 unit: 'px',
                 format: 'a4',
@@ -115,7 +119,7 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             startDate,
             endDate,
             billPerDay,
-            gstNo
+            gstNo,
         } = getValues();
 
         generateZip(generateInvoices(
@@ -139,12 +143,12 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
         <div className="flex-col">
             <div className="flex-col">
                     <InputLabel htmlFor="gstNo">GST No.</InputLabel>
-                    <TextInput id="gstNo" 
+                    <TextInput
+                    id="gstNo" 
                      placeholder="ABGXXXXX"
                      {
                         ...register('gstNo', {
                             required: true,
-                            minLength: 10
                         })
                      }
                      />
@@ -155,7 +159,9 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
                     <InputLabel htmlFor="serialNo" >Serial No.</InputLabel>
                     <NumberInput id="serialNo" placeholder="1234"
                     {
-                        ...register('serialNo')
+                        ...register('serialNo', {
+                            required: true
+                        })
                     }/>
                     <InputError />
                 </div>
@@ -163,7 +169,9 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
                     <InputLabel>Bill per day</InputLabel>
                     <NumberInput placeholder="2"
                     {
-                        ...register('billPerDay')
+                        ...register('billPerDay', {
+                            required: true
+                        })
                     } />
                     <InputError />
                 </div>
@@ -174,7 +182,9 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
                     <DatePicker
                     onClick={(e) => e.currentTarget.showPicker()}
                     {
-                        ...register('startDate')
+                        ...register('startDate', {
+                            required: true
+                        })
                     } />
                     <InputError />
                 </div>
@@ -183,10 +193,22 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
                     <DatePicker         
                     onClick={(e) => e.currentTarget.showPicker() }           
                     {
-                        ...register('endDate')
+                        ...register('endDate', {
+                            required: true
+                        })
                     }/>
                     <InputError />
                 </div>
+            </div>
+            <div className="flex-col">
+                    <InputLabel htmlFor="signature">Signature</InputLabel>
+                    <TextInput id="signature" 
+                     placeholder="signature"
+                     {
+                        ...register('signature')
+                     }
+                     />
+                    <InputError />
             </div>
             <PrimaryButton className={cn({'pointer-events-none bg-opacity-50': !isValid})} onClick={generateInvoice}>Generate</PrimaryButton>
         </div>

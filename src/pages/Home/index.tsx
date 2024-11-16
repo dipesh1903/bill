@@ -48,6 +48,7 @@ export default function HomePage() {
                         </DialogTrigger>
                         <DialogContent>
                             <TemplateBasic
+                            signature={'signature'}
                             isPreview={true}
                             billDetails={previewBill as unknown as BillFE}
                             companyInfo={previewBill.companyInfo}

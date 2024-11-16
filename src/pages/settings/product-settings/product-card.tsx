@@ -70,7 +70,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                     }}
                 }
                 className={cn(
-                    "bg-surface-low mb-2 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light w-full",
+                    "bg-surface-low mt-1 mb-2 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light w-full",
                     {'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.productName && mode === ProductSettingsMode.EDIT}
                     )}>
                     {getValues().productName ||  'My product'}</div>
@@ -84,7 +84,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                     type: 'NAME',
                     value: false
                 })}
-                className={cn("absolute top-[24px]", {'invisible': !(displayValue.showNameInput || type === ProductSettingsType.FORM)})}
+                className={cn("absolute mt-1 top-[24px]", {'invisible': !(displayValue.showNameInput || type === ProductSettingsType.FORM)})}
                 placeholder="product name"
                 autoFocus
                 />
@@ -103,7 +103,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                         });
                         } }} 
                         className={cn(
-                            "bg-surface-low w-24 mb-2 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light",
+                            "bg-surface-low mt-1 w-24 mb-2 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light",
                             {'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.hsnCode && mode === ProductSettingsMode.EDIT}
                             )}>
                             {getValues().hsnCode ||  'HSN NO.'}</div>
@@ -113,7 +113,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                                     required: 'Cannot be empty'
                                 })
                             }
-                            className={cn("absolute top-[24px] flex-1 w-24", {'invisible': !displayValue.showHSNInput})}
+                            className={cn("absolute mt-1 top-[24px] flex-1 w-24", {'invisible': !displayValue.showHSNInput})}
                             placeholder="HSN"
                             onBlur={() => dispatch({
                                 type: 'HSN',
@@ -133,7 +133,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                                 setFocus('rate')
                         }); }}} 
                         className={cn(
-                            "bg-surface-low mb-2 w-20 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light",
+                            "bg-surface-low mt-1 mb-2 w-20 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light",
                             {'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.rate && mode === ProductSettingsMode.EDIT}
                             )}>
                             {getValues().rate ||  'Rate'}</div>
@@ -143,7 +143,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                                     required: 'Cannot be empty'
                                 })
                             }
-                            className={cn("flex-1 absolute top-[24px] w-20", {'invisible': !displayValue.showRateInput})}
+                            className={cn("flex-1 mt-1 absolute top-[24px] w-20", {'invisible': !displayValue.showRateInput})}
                             placeholder="Rate"
                             onBlur={() => dispatch({
                                 type: 'RATE',
@@ -158,12 +158,12 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                         {
                             ...register('qty')
                         }
-                        className={cn("w-full  h-fit p-2 border-2 rounded-lg border-black",
+                        className={cn("w-full mt-1  h-fit p-2 border-2 rounded-lg border-black",
                             {'ring-2 ring-outline-low': open, 'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.qty  && mode === ProductSettingsMode.EDIT})}
                             onClick={() => setOpen(true)} />
                         <DropdownRoot open={open && mode === ProductSettingsMode.EDIT} onOpenChange={setOpen}>
                             <DropdownTrigger asChild>
-                                <div className="w-full p-2 h-full border-2 rounded-lg border-black absolute top-[24px] invisible">Open dropdown okay</div>
+                                <div className="w-full mt-1 p-2 h-full border-2 rounded-lg border-black absolute top-0 invisible">Open dropdown okay</div>
                             </DropdownTrigger>
                             <DropdownContent className="p-2 hover:cursor-pointer max-h-72 max-w-72 bg-surface-low rounded-lg shadow-lg overflow-scroll" >
                                 {

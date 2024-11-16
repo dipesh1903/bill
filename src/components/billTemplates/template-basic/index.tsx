@@ -9,11 +9,12 @@ type props = {
     companyInfo: companyInfo,
     cgst: number,
     sgst: number,
+    signature: string,
     isPreview?: boolean
 }
 
 export default function TemplateBasic(props: props) {
-    const {companyInfo, billDetails, isPreview} = props;
+    const {companyInfo, billDetails, isPreview, signature} = props;
     return(
         <div className={cn("flex flex-col w-[750px]", {'w-full': isPreview})}>
             <div className="flex-1">GSTIN<span className="pl-2">{billDetails.gstNo}</span></div>
@@ -38,6 +39,10 @@ export default function TemplateBasic(props: props) {
                 </div>
             </div>
             <BillTable {...props} />
+            <div className="pt-2">
+                <div className="italic font-extralight">{signature}</div>
+                <div>For {billDetails.companyName}</div>
+            </div>
         </div>
     )
 }
