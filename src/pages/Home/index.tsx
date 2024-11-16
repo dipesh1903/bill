@@ -8,6 +8,7 @@ import TemplateBasic from "../../components/billTemplates/template-basic";
 import { previewBill } from "../../constant";
 import { BillFE } from "../../types/bill";
 import { GearIcon } from "@radix-ui/react-icons";
+import logo from '../../assets/app-icon.svg'
 
 export default function HomePage() {
     const dispatch = useContextDispatch();
@@ -30,7 +31,10 @@ export default function HomePage() {
     return(
         <div className="flex flex-col max-w-2xl overflow-hidden h-[100vh] m-auto">
             <nav className="bg-surface-high p-6 flex justify-between">
-                <h1>Generate Cash Bill</h1>
+                <div className="flex flex-row gap-2">
+                    <img src={logo} width={24}/>
+                    <h1 className="font-bold">Generate Cash Bill</h1>
+                </div>
                 <div className="flex flex-row gap-4 items-center">
                     <div className="flex">
                         <InputLabel className="inline-flex p-0 items-center cursor-pointer">
