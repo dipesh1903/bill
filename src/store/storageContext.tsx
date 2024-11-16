@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { companySettingsForm } from "../pages/settings/types";
-import { Products } from "../types/settings";
+import { BillSettings, Products } from "../types/settings";
 import { LOCAL_STORAGE_KEY, storePersist } from "./storagePersist";
 
 
@@ -9,6 +9,7 @@ export type contextType = {
     saveToLocal: boolean,
     companySettings: companySettingsForm,
     products: Products[],
+    settings: BillSettings
 }
 const storageContextValue = createContext<contextType>({} as contextType);
 const dispatchContext = createContext<React.Dispatch<React.SetStateAction<contextType>>>(() => {});

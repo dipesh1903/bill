@@ -20,10 +20,7 @@ export interface RangeSet {
     min: number
 }
 
-export interface companySettings extends companyInfo {
-    names: string[],
-    address: string[],
-}
+export type companySettings = companyInfo;
 
 export interface companyInfo {
     state: string,
@@ -33,4 +30,9 @@ export interface companyInfo {
     city: string,
     district: string
     id?: string
+}
+
+export interface BillSettings {
+    customerNames?: string[],
+    address?: string[],
 }

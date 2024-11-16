@@ -19,6 +19,7 @@ import { companySettingsForm } from "../settings/types";
 import { Products } from "../../types/settings";
 import { toast } from "react-toastify";
 import { cn } from "../../utils/reactUtils";
+import { useContextStore } from "../../store/storageContext";
 
 export type fieldType = {
     gstNo: string,
@@ -33,6 +34,8 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
     stepperContextFns?: stepperContextFnType,
     companySetting: companySettingsForm,
     products: Products[], onAction: () => void}) {
+
+    const storage = useContextStore();
     const stepperContextFn = useOutletContext<[stepperContextFnType]>();
     const {state} = useLocation();
     const formValue = state && state.value ? state.value : value;
@@ -60,6 +63,7 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             name: string,
             content: Blob
         }> = [];
+        let index = 0
         for await (const bill of values) {
             const content = renderToString(<TemplateBasic companyInfo={companySetting}
                 billDetails={bill} cgst={companySetting.cgst}
@@ -74,7 +78,6 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             x: 20,
             y: 20,
             })
-            let index = 0
             const cc = doc.output('blob');
             zipContent.push({
                 name: `bill-${index++}.pdf`,
@@ -122,7 +125,7 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             gstNo,
         } = getValues();
 
-        generateZip(generateInvoices(
+        const invoices = generateInvoices(
             serialNo,
             startDate,
             endDate,
@@ -136,7 +139,12 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
                 products: products
             },
             gstNo,
-        ))
+            storage?.settings?.address || invoiceSetting.address,
+            storage?.settings?.customerNames || invoiceSetting.customerNames
+        )
+
+        console.log(invoices.length)
+        generateZip(invoices)
     }
         
     return (

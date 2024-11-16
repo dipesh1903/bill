@@ -1,8 +1,13 @@
+import { useForm } from "react-hook-form";
 import { STATE_CODE } from "../../../constant";
 import { BillFE } from "../../../types/bill";
 import { companyInfo } from "../../../types/settings";
 import { cn } from "../../../utils/reactUtils";
+import { PrimaryButton } from "../../ui/button";
+import { TextInput } from "../../ui/input-string";
 import BillTable from "./bill-table";
+import { useContextDispatch, useContextStore } from "../../../store/storageContext";
+import { toast } from "react-toastify";
 
 type props = {
     billDetails: BillFE,
@@ -13,7 +18,38 @@ type props = {
     isPreview?: boolean
 }
 
+type fieldValues = {
+    customerName: string,
+    address: string
+}
+
 export default function TemplateBasic(props: props) {
+    const storage = useContextStore();
+    const {register, getValues} = useForm<fieldValues>({
+        defaultValues: {
+            customerName: storage?.settings?.customerNames?.join(',') || '',
+            address: storage?.settings?.address?.join(',') || ''
+        }
+    });
+    const dispatch = useContextDispatch();
+
+    function saveConfig() {
+        let {
+            customerName,
+            address
+        } = getValues();
+        customerName = customerName.trim();
+        address = address.trim();
+        dispatch((prev) => ({
+            ...prev,
+            settings: {
+                customerNames: customerName.length ?  customerName.split(',') : undefined,
+                address: address.length ?  address.split(',') : undefined
+            }
+        }))
+        toast.success('Settings updated successfully')
+    }
+
     const {companyInfo, billDetails, isPreview, signature} = props;
     return(
         <div className={cn("flex flex-col w-[750px]", {'w-full': isPreview})}>
@@ -27,9 +63,31 @@ export default function TemplateBasic(props: props) {
                 <div><span className="font-bold pb-2">Date: </span><span className="pl-2">{billDetails.date.toDateString()}</span></div>
             </div>
             <div className="flex flex-row justify-between">
-                <div className="flex flex-col gap-1">
-                    <div><span className="font-bold">Name:</span><span className="pl-2">{billDetails.name}</span></div>
-                    <div><span className="font-bold">Address:</span><span className="pl-2">{billDetails.district}</span></div>
+                <div className="flex flex-col gap-1 flex-1">
+                    <div className="mr-12">
+                    <span className="font-bold">Name:</span>
+                        { 
+                        isPreview ? 
+                            <TextInput
+                                {
+                                    ...register('customerName')
+                                }
+                                placeholder="Add list of customer names (eg: acme , xyz, )"></TextInput> :
+                            <span className="pl-2">{billDetails.name}</span>
+                        }
+                    </div>
+                    <div className="mr-12">
+                        <span className="font-bold">Address:</span>
+                        {
+                            isPreview ?
+                            <TextInput
+                                {
+                                    ...register('address')
+                                }
+                                placeholder="Add list of address (eg: acme , xyz...)"></TextInput> :
+                            <span className="pl-2">{billDetails.address ? billDetails.address : billDetails.district}</span>
+                        }
+                    </div>
                 </div>
                 <div className="flex flex-row">
                     <div className="flex flex-col gap-1">
@@ -43,6 +101,11 @@ export default function TemplateBasic(props: props) {
                 <div className="italic font-extralight">{signature}</div>
                 <div>For {billDetails.companyName}</div>
             </div>
+            { isPreview && 
+                <div className="flex justify-end">
+                    <PrimaryButton className="w-fit px-4" onClick={saveConfig}>Save</PrimaryButton>
+                </div>
+            }
         </div>
     )
 }

@@ -12,7 +12,8 @@ export function generateInvoices(
     companyInfo: companyInfo,
     invoiceSettings: InvoiceSettings,
     gstNo: string,
-    address?: string,
+    address: string[],
+    customerNames: string[]
 ): BillFE[] {
 
     let serialTrack = serialNo;
@@ -27,10 +28,10 @@ export function generateInvoices(
             result.push({
                 serialNo: serialTrack,
                 date: dateTrack.toDate(),
-                name: invoiceSettings.customerNames[getRandomInteger({min: 0, max: invoiceSettings.customerNames.length - 1})],
+                name: customerNames[getRandomInteger({min: 0, max: customerNames.length - 1})],
                 bill,
                 gstNo,
-                address,
+                address: address[getRandomInteger({min: 0, max: address.length - 1})],
                 ...companyInfo
             })
             dateTrack = moment(dateTrack).add(1, 'day');
