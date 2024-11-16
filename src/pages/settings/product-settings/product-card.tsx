@@ -12,11 +12,12 @@ import { NumberInput } from "../../../components/ui/input-number"
 import uuid from 'uuid-random';
 import { productCardValues } from "../types"
 import { InputLabel } from "../../../components/ui/input-label"
+import { Cross1Icon, TrashIcon } from "@radix-ui/react-icons"
 
 type props = {
     type: ProductSettingsType,
     product?: Products,
-    onSave: (product: Products) => void
+    onSave: (product?: Products) => void
 }
 
 export default function ProductCard({type = ProductSettingsType.CARD, product, onSave}: props) {
@@ -54,7 +55,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
         <div className={cn("p-4 rounded-lg", {"shadow-product-cards-edit" : mode === ProductSettingsMode.EDIT,
             "shadow-product-cards": mode !== ProductSettingsMode.EDIT
         })}>
-            {type === ProductSettingsType.FORM && <div className="flex justify-end mb-1">close</div> }
+            {type === ProductSettingsType.FORM && <div onClick={() => onSave()} className="flex justify-self-end hover:bg-surface-high hover:cursor-pointer p-2 rounded-full"><Cross1Icon/></div> }
             <div className="relative">
                 <InputLabel>Product Name</InputLabel>
                 <div onClick={() => {
@@ -177,25 +178,36 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                     </div>
                 </div>
             </div>
-            <div className="flex gap-4 mt-4">
-                { type === ProductSettingsType.CARD &&
-                <PrimaryButton className="w-[50%] " onClick={() => {
-                    dispatch({
-                        type: 'NAME',
-                        value: true
-                    })
-                    setTimeout(() => {
-                        setMode(ProductSettingsMode.EDIT)
-                        setFocus('productName')
-                }); 
-                    }}>Edit</PrimaryButton>
-                }
-                {
-                    mode === ProductSettingsMode.EDIT && <PrimaryButton
-                    onClick={() => { setMode(ProductSettingsMode.VIEW); reset()}}
-                    >Cancel</PrimaryButton>
-                }
-                {isDirty && mode === ProductSettingsMode.EDIT && <PrimaryButton className="w-[50%]" onClick={saveProduct}>Save changes</PrimaryButton>}
+            <div className="flex flex-row justify-between mt-4">
+                <div className="flex gap-4">
+                    { type === ProductSettingsType.CARD &&
+                    <PrimaryButton className="w-fit " onClick={() => {
+                        dispatch({
+                            type: 'NAME',
+                            value: true
+                        })
+                        setTimeout(() => {
+                            setMode(ProductSettingsMode.EDIT)
+                            setFocus('productName')
+                    }); 
+                        }}>Edit</PrimaryButton>
+                    }
+                    {
+                        mode === ProductSettingsMode.EDIT && <PrimaryButton
+                        className="w-fit"
+                        onClick={() => { setMode(ProductSettingsMode.VIEW); reset()}}
+                        >Cancel</PrimaryButton>
+                    }
+                    {isDirty && mode === ProductSettingsMode.EDIT && <PrimaryButton className="w-fit" onClick={saveProduct}>Save changes</PrimaryButton>}
+                </div>
+                {type === ProductSettingsType.CARD && <div className="hover:bg-surface-high hover:cursor-pointer p-2 rounded-full">
+                    <TrashIcon
+                        onClick={() => onSave()}
+                        height={24}
+                        width={24}
+                        className="stroke-solid-medium h-[100%] w-[100%] stroke-[0.5px]"
+                    />
+                </div>}
             </div>
         </div>
     )

@@ -6,7 +6,7 @@ const PrimaryButton = forwardRef<HTMLButtonElement, HTMLAttributes<HTMLButtonEle
     ({className, ...props}, ref) => (
     <button 
         ref={ref}
-        className={cn("w-full bg-solid-medium text-white text-center rounded-md p-2.5 hover:bg-solid-light", className)} 
+        className={cn("w-full bg-solid-medium text-white text-center rounded-md px-2.5 py-2  hover:bg-solid-light", className)} 
         {...props}/>
 ))
 

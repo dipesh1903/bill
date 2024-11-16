@@ -22,13 +22,21 @@ export default function ProductSettings({value, stepperContextFns}: {value?: Pro
         }
     }, [products, stepperContextFn, stepperContextFns])
 
-    function onSave(product: Products, index?: number) {
-        if (index || index === 0) {
-            const result = [...products]
-            result[index] = product;
-            setProducts([...result]);
+    function onSave(product?: Products, index?: number) {
+        if (product) {
+            if (index || index === 0) {
+                const result = [...products]
+                result[index] = product;
+                setProducts([...result]);
+            } else {
+                setProducts([...products, product]);
+            }
         } else {
-            setProducts([...products, product]);
+            if (index || index === 0) {
+                const result = [...products]
+                result.splice(index, 1)
+                setProducts([...result]);
+            }
         }
         setShowCard(false);
     }
@@ -47,7 +55,7 @@ export default function ProductSettings({value, stepperContextFns}: {value?: Pro
                         className="my-2">
                         <ProductCard type={ProductSettingsType.CARD}
                         product={product}
-                        onSave={(product: Products) => onSave(product, index)}/>
+                        onSave={(product?: Products) => onSave(product, index)}/>
                     </div>
                 ))
             }

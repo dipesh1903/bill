@@ -18,6 +18,7 @@ import { stepperContextFnType } from "../../types/types";
 import { companySettingsForm } from "../settings/types";
 import { Products } from "../../types/settings";
 import { toast } from "react-toastify";
+import { cn } from "../../utils/reactUtils";
 
 export type fieldType = {
     gstNo: string,
@@ -186,7 +187,7 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
                     <InputError />
                 </div>
             </div>
-            <PrimaryButton onClick={generateInvoice}>Generate</PrimaryButton>
+            <PrimaryButton className={cn({'pointer-events-none bg-opacity-50': !isValid})} onClick={generateInvoice}>Generate</PrimaryButton>
         </div>
     )
 }
