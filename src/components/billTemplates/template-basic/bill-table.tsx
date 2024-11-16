@@ -1,13 +1,13 @@
-import { BillDetails } from "../../../types/bill"
+import { BillFE } from "../../../types/bill"
 import { getAmountAndPaisa } from "../../../utils/utility";
 type props = {
-    billDetails: BillDetails[],
+    billDetails: BillFE,
     cgst: number,
     sgst: number
 }
 
 export default function BillTable({billDetails, cgst, sgst}: props) {
-    let totalRef = billDetails.reduce((acc, bill) => acc + (Math.round(+bill.quantity * +bill.rate) * 100 / 100), 0)
+    let totalRef = billDetails.bill.reduce((acc, bill) => acc + (Math.round(+bill.quantity * +bill.rate) * 100 / 100), 0)
     
     const sgstAmt = Math.round((+sgst / 100)*totalRef * 100) / 100;
     const cgstAmt = Math.round((+cgst / 100)*totalRef * 100) / 100;
@@ -21,7 +21,7 @@ export default function BillTable({billDetails, cgst, sgst}: props) {
     const roundoff = converted > Number(50) ? `${100 - converted}` : `- ${converted}`;
     return (
         <>
-        <table className="border-2 border-black w-[700px] text-sm mt-5">
+        <table className="border-2 border-black text-sm mt-5">
         <tr className="text-[10px]">
             <th className="border-black  border-2 border-l-0 px-6 py-2">QTY</th>
             <th className="border-black  border-2  border-l-0 px-10 py-2 flex-1">DESCRIPTION ITEMS</th>
@@ -30,7 +30,7 @@ export default function BillTable({billDetails, cgst, sgst}: props) {
             <th colSpan={2} className="border-black  border-2 border-l-0 border-r-0 px-6 py-2">AMOUNT (RS)</th>
         </tr>
         {
-            billDetails.map((bill, index) => { 
+            billDetails.bill.map((bill, index) => { 
                 const [rupees, paisa] = getAmountAndPaisa(+bill.rate * +bill.quantity);
                 return (
                 <tr key={index} className="">

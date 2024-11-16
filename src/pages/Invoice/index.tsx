@@ -59,7 +59,8 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             content: Blob
         }> = [];
         for await (const bill of values) {
-            const content = renderToString(<TemplateBasic companyInfo={companySetting} billDetails={bill.bill} bill={bill} cgst={companySetting.cgst} sgst={companySetting.sgst} />) 
+            const content = renderToString(<TemplateBasic companyInfo={companySetting}
+                billDetails={bill} cgst={companySetting.cgst} sgst={companySetting.sgst} />) 
             const doc = new jsPDF({
                 unit: 'px',
                 format: 'a4',

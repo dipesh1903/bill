@@ -1,4 +1,4 @@
-import { InvoiceSettings } from "./types/settings"
+import { companyInfo, InvoiceSettings } from "./types/settings"
 
 export const USER_NAMES = [
     'Anil',
@@ -19,21 +19,22 @@ export enum QuantityType {
     METER = 'METER'
 }
 
-// export const companyDetails: companyInfo = {
-//     state: "West Bengal",
-//     stateCode: 19,
-//     cgst: 9,
-//     sgst: 9,
-//     displayName: "Shree Ganesh Hardware",
-//     id: "1234"
-// }
+const companyDetails: companyInfo = {
+    state: "KARNATAKA",
+    cgst: 9,
+    sgst: 9,
+    companyName: "XYZ Company",
+    id: "1234",
+    city: 'ABC',
+    district: 'INDIA'
+}
 
 export const invoiceSetting: InvoiceSettings = {
     id: "",
     customerNames: ['Cash'],
     address: [''],
     products: [{
-        productName: "AC Sheet kh fegjer jhgjdrjhjrgegjh jewh ehg eluhgek jhrg,k",
+        productName: "Product name",
         hsnCode: 12345,
         qty: QuantityType.KG,
         rate: 80,
@@ -132,6 +133,18 @@ export const STATE_CODE: {[x: string]: string} = {
     "LADAKH (NEWLY ADDED)": "38",
     "OTHER TERRITORY": "97",
     "CENTRE JURISDICTION": "99"
+}
+
+export const previewBill = {
+    companyInfo: companyDetails,
+    serialNo: 1,
+    date: new Date(),
+    name: 'Cash',
+    ...companyDetails,
+    bill: [{
+            ...invoiceSetting.products[0],
+            quantity: 80
+        }]
 }
 
 
