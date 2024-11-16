@@ -44,7 +44,7 @@ export default function HomePage() {
                     </div>
                     <Dialog>
                         <DialogTrigger>
-                            <GearIcon height={20} width={20}></GearIcon>
+                            <GearIcon height={20} width={20} className="hover:bg-surface-low rounded-full"></GearIcon>
                         </DialogTrigger>
                         <DialogContent>
                             <TemplateBasic
