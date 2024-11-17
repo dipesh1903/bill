@@ -41,7 +41,7 @@ export default function TemplateBasic(props: props) {
             customerName,
             address
         } = getValues();
-        const qtyRange = qtyRangeRef.current.split(',')
+        const qtyRange = qtyRangeRef.current.length ? qtyRangeRef.current.split(',') : []
         customerName = customerName.trim();
         address = address.trim();
         dispatch((prev) => ({

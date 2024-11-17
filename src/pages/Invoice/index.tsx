@@ -13,13 +13,15 @@ import { renderToString } from "react-dom/server";
 import jsPDF from "jspdf";
 import JSZip from "jszip";
 import { useLocation, useOutletContext } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { stepperContextFnType } from "../../types/types";
 import { companySettingsForm } from "../settings/types";
 import { Products } from "../../types/settings";
 import { toast } from "react-toastify";
 import { cn } from "../../utils/reactUtils";
 import { useContextStore } from "../../store/storageContext";
+import { Dialog, DialogContent } from "../../components/ui/dialog";
+import LoaderIcon from '../../assets/spinner.svg';
 
 export type fieldType = {
     gstNo: string,
@@ -34,7 +36,7 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
     stepperContextFns?: stepperContextFnType,
     companySetting: companySettingsForm,
     products: Products[], onAction: () => void}) {
-
+    const [loader , setLoader] = useState(false)
     const storage = useContextStore();
     const stepperContextFn = useOutletContext<[stepperContextFnType]>();
     const {state} = useLocation();
@@ -59,64 +61,71 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
     }, [isValid, stepperContextFn, stepperContextFns, watchAll]);
 
     async function generateZip(values: BillFE[]) {
-        const zipContent: Array<{
-            name: string,
-            content: Blob
-        }> = [];
-        let index = 0
-        for await (const bill of values) {
-            const content = renderToString(<TemplateBasic companyInfo={companySetting}
-                billDetails={bill} cgst={companySetting.cgst}
-                sgst={companySetting.sgst}
-                signature={getValues().signature}/>) 
-            const doc = new jsPDF({
-                unit: 'px',
-                format: 'a4',
-                hotfixes: ["px_scaling"]
-            });
-            await doc.html(content, {
-            x: 20,
-            y: 20,
-            })
-            const cc = doc.output('blob');
-            zipContent.push({
-                name: `bill-${index++}.pdf`,
-                content: cc
-            }) 
-        };
-        const zip = new JSZip();
-        let count = 0;
-        const totalFiles = zipContent.length;
-        function addFileToZip(index: number) {
-            const file = zipContent[index];
-            const filename = file.name;
-            const content = file.content;
-
-            zip.file(filename, content, {
-                binary: true
-            });
-            count++;
-            if (count === totalFiles) {
-                zip.generateAsync({
-                    type: "blob"
-                }).then(function (content) {
-                    const link = document.createElement("a");
-                    link.href = URL.createObjectURL(content);
-                    link.download = `cash-Bill${Math.floor(Math.random() * 100)}.zip`;
-                    link.click();
-                    URL.revokeObjectURL(link.href);
+        try 
+        {
+            const zipContent: Array<{
+                name: string,
+                content: Blob
+            }> = [];
+            let index = 0
+            for await (const bill of values) {
+                const content = renderToString(<TemplateBasic companyInfo={companySetting}
+                    billDetails={bill} cgst={companySetting.cgst}
+                    sgst={companySetting.sgst}
+                    signature={getValues().signature}/>) 
+                const doc = new jsPDF({
+                    unit: 'px',
+                    format: 'a4',
+                    hotfixes: ["px_scaling"]
                 });
-            }
-        }
-        for (let i = 0; i < totalFiles; i++) {
-            addFileToZip(i);
-        }
-        toast.success('Bills downloaded successfully')
-        onAction();
+                await doc.html(content, {
+                x: 20,
+                y: 20,
+                })
+                const cc = doc.output('blob');
+                zipContent.push({
+                    name: `bill-${index++}.pdf`,
+                    content: cc
+                }) 
+            };
+            const zip = new JSZip();
+            let count = 0;
+            const totalFiles = zipContent.length;
+            function addFileToZip(index: number) {
+                const file = zipContent[index];
+                const filename = file.name;
+                const content = file.content;
 
+                zip.file(filename, content, {
+                    binary: true
+                });
+                count++;
+                if (count === totalFiles) {
+                    zip.generateAsync({
+                        type: "blob"
+                    }).then(function (content) {
+                        const link = document.createElement("a");
+                        link.href = URL.createObjectURL(content);
+                        link.download = `cash-Bill-${new Date().toLocaleDateString()}-${new Date().toLocaleTimeString()}.zip`;
+                        link.click();
+                        URL.revokeObjectURL(link.href);
+                    });
+                }
+            }
+            for (let i = 0; i < totalFiles; i++) {
+                addFileToZip(i);
+            }
+            toast.success('Bills downloaded successfully')
+            onAction();
+        } catch {
+            toast.error('Failed!! please try with less no. of bills')
+        } finally {
+            setLoader(false);
+        }
     }
 
     function generateInvoice() {
+        setLoader(true);
         const {
             serialNo,
             startDate,
@@ -124,7 +133,6 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             billPerDay,
             gstNo,
         } = getValues();
-
         const invoices = generateInvoices(
             serialNo,
             startDate,
@@ -141,83 +149,92 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
             gstNo,
             storage.settings
         )
-
-        console.log(invoices.length)
         generateZip(invoices)
     }
         
     return (
-        <div className="flex-col">
+        <>
             <div className="flex-col">
-                    <InputLabel htmlFor="gstNo">GST No.</InputLabel>
-                    <TextInput
-                    id="gstNo" 
-                     placeholder="ABGXXXXX"
-                     {
-                        ...register('gstNo', {
-                            required: true,
-                        })
-                     }
-                     />
-                    <InputError />
-            </div>
-            <div className="flex flex-row gap-4">
-                <div className="flex flex-col flex-1">
-                    <InputLabel htmlFor="serialNo" >Serial No.</InputLabel>
-                    <NumberInput id="serialNo" placeholder="1234"
-                    {
-                        ...register('serialNo', {
-                            required: true
-                        })
-                    }/>
-                    <InputError />
+                <div className="flex-col">
+                        <InputLabel htmlFor="gstNo">GST No.</InputLabel>
+                        <TextInput
+                        id="gstNo" 
+                        placeholder="ABGXXXXX"
+                        {
+                            ...register('gstNo', {
+                                required: true,
+                            })
+                        }
+                        />
+                        <InputError />
                 </div>
-                <div className="flex flex-col flex-1">
-                    <InputLabel>Bill per day</InputLabel>
-                    <NumberInput placeholder="2"
-                    {
-                        ...register('billPerDay', {
-                            required: true
-                        })
-                    } />
-                    <InputError />
+                <div className="flex flex-row gap-4">
+                    <div className="flex flex-col flex-1">
+                        <InputLabel htmlFor="serialNo" >Serial No.</InputLabel>
+                        <NumberInput id="serialNo" placeholder="1234"
+                        {
+                            ...register('serialNo', {
+                                required: true
+                            })
+                        }/>
+                        <InputError />
+                    </div>
+                    <div className="flex flex-col flex-1">
+                        <InputLabel>Bill per day</InputLabel>
+                        <NumberInput placeholder="2"
+                        {
+                            ...register('billPerDay', {
+                                required: true
+                            })
+                        } />
+                        <InputError />
+                    </div>
                 </div>
-            </div>
-            <div className="flex flex-row gap-4">
-                <div className="flex flex-col flex-1">
-                    <InputLabel>Start Date</InputLabel>
-                    <DatePicker
-                    onClick={(e) => e.currentTarget.showPicker()}
-                    {
-                        ...register('startDate', {
-                            required: true
-                        })
-                    } />
-                    <InputError />
+                <div className="flex flex-row gap-4">
+                    <div className="flex flex-col flex-1">
+                        <InputLabel>Start Date</InputLabel>
+                        <DatePicker
+                        onClick={(e) => e.currentTarget.showPicker()}
+                        {
+                            ...register('startDate', {
+                                required: true
+                            })
+                        } />
+                        <InputError />
+                    </div>
+                    <div className="flex flex-col flex-1">
+                        <InputLabel>End Date</InputLabel>
+                        <DatePicker         
+                        onClick={(e) => e.currentTarget.showPicker() }           
+                        {
+                            ...register('endDate', {
+                                required: true
+                            })
+                        }/>
+                        <InputError />
+                    </div>
                 </div>
-                <div className="flex flex-col flex-1">
-                    <InputLabel>End Date</InputLabel>
-                    <DatePicker         
-                    onClick={(e) => e.currentTarget.showPicker() }           
-                    {
-                        ...register('endDate', {
-                            required: true
-                        })
-                    }/>
-                    <InputError />
+                <div className="flex-col">
+                        <InputLabel htmlFor="signature">Signature</InputLabel>
+                        <TextInput id="signature" 
+                        placeholder="signature"
+                        {
+                            ...register('signature')
+                        }
+                        />
+                        <InputError />
                 </div>
+                <PrimaryButton className={cn({'pointer-events-none bg-opacity-50': !isValid})} onClick={generateInvoice}>Generate</PrimaryButton>
             </div>
-            <div className="flex-col">
-                    <InputLabel htmlFor="signature">Signature</InputLabel>
-                    <TextInput id="signature" 
-                     placeholder="signature"
-                     {
-                        ...register('signature')
-                     }
-                     />
-                    <InputError />
-            </div>
-            <PrimaryButton className={cn({'pointer-events-none bg-opacity-50': !isValid})} onClick={generateInvoice}>Generate</PrimaryButton>
-        </div>
+            {
+                loader && 
+                <Dialog open={loader} onOpenChange={() => setLoader(false)}>
+                    <DialogContent onInteractOutside={(e) => e.preventDefault()}
+                        className="w-fit border-none bg-transparent">
+                        <img width={80} className="stroke-solid-medium" src={LoaderIcon} />
+                    </DialogContent>
+                </Dialog>
+            }
+        </>
     )
 }
