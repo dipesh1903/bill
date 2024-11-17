@@ -106,7 +106,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                             "bg-surface-low mt-1 w-24 mb-2 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light",
                             {'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.hsnCode && mode === ProductSettingsMode.EDIT}
                             )}>
-                            {getValues().hsnCode ||  'HSN NO.'}</div>
+                            {getValues().hsnCode ||  <span className="text-outline-medium">756101</span>}</div>
                         <NumberInput
                             {
                                 ...register('hsnCode', {
@@ -136,7 +136,7 @@ export default function ProductCard({type = ProductSettingsType.CARD, product, o
                             "bg-surface-low mt-1 mb-2 w-20 outline-none focus:ring-4 focus:ring-outline-low placeholder-outline-medium text-solid-high p-2 border-[2px] rounded-md border-solid-light",
                             {'bg-yellow-100': type === ProductSettingsType.CARD && dirtyFields.rate && mode === ProductSettingsMode.EDIT}
                             )}>
-                            {getValues().rate ||  'Rate'}</div>
+                            {getValues().rate ||  <span className="text-outline-medium">30</span>}</div>
                         <NumberInput
                             {
                                 ...register('rate', {

@@ -139,8 +139,7 @@ export default function InvoiceHome({value, stepperContextFns, companySetting, p
                 products: products
             },
             gstNo,
-            storage?.settings?.address || invoiceSetting.address,
-            storage?.settings?.customerNames || invoiceSetting.customerNames
+            storage.settings
         )
 
         console.log(invoices.length)

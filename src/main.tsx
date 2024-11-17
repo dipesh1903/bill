@@ -5,7 +5,7 @@ import App from './App.tsx'
 import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { StorageContext } from './store/storageContext.tsx';
-
+import './firebaseConfig.ts'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

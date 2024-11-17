@@ -17,6 +17,7 @@
     "@react-pdf/renderer": "^4.0.0",
     "@sparticuz/chromium-min": "^130.0.0",
     "clsx": "^2.1.1",
+    "firebase": "^11.0.2",
     "jspdf": "^2.5.2",
     "jszip": "^3.10.1",
     "moment": "^2.30.1",

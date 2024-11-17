@@ -6,7 +6,7 @@ export const InputLabel = forwardRef<HTMLLabelElement, LabelHTMLAttributes<HTMLL
             <label
                 ref={ref}
                 className={cn(
-                    "text-solid-high pb-2",className
+                    "text-solid-high pb-2 font-bold",className
                 )}
                 {...props}
             />

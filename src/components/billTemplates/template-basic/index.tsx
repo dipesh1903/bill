@@ -8,6 +8,7 @@ import { TextInput } from "../../ui/input-string";
 import BillTable from "./bill-table";
 import { useContextDispatch, useContextStore } from "../../../store/storageContext";
 import { toast } from "react-toastify";
+import { useRef } from "react";
 
 type props = {
     billDetails: BillFE,
@@ -15,6 +16,7 @@ type props = {
     cgst: number,
     sgst: number,
     signature: string,
+    onSave?: () => void,
     isPreview?: boolean
 }
 
@@ -24,6 +26,7 @@ type fieldValues = {
 }
 
 export default function TemplateBasic(props: props) {
+    const {companyInfo, billDetails, isPreview, signature, onSave} = props;
     const storage = useContextStore();
     const {register, getValues} = useForm<fieldValues>({
         defaultValues: {
@@ -31,26 +34,30 @@ export default function TemplateBasic(props: props) {
             address: storage?.settings?.address?.join(',') || ''
         }
     });
+    const qtyRangeRef = useRef('');
     const dispatch = useContextDispatch();
-
     function saveConfig() {
         let {
             customerName,
             address
         } = getValues();
+        const qtyRange = qtyRangeRef.current.split(',')
         customerName = customerName.trim();
         address = address.trim();
         dispatch((prev) => ({
             ...prev,
             settings: {
                 customerNames: customerName.length ?  customerName.split(',') : undefined,
-                address: address.length ?  address.split(',') : undefined
+                address: address.length ?  address.split(',') : undefined,
+                qtyRange: qtyRange.length ? {min: +qtyRange[0], max: qtyRange[1] ? +qtyRange[1] : +qtyRange[0]} : undefined
             }
         }))
+        if (onSave && typeof onSave === 'function') {
+            onSave();
+        }
         toast.success('Settings updated successfully')
     }
 
-    const {companyInfo, billDetails, isPreview, signature} = props;
     return(
         <div className={cn("flex flex-col w-[750px]", {'w-full': isPreview})}>
             <div className="flex-1">GSTIN<span className="pl-2">{billDetails.gstNo}</span></div>
@@ -96,7 +103,9 @@ export default function TemplateBasic(props: props) {
                     </div>
                 </div>
             </div>
-            <BillTable {...props} />
+            <BillTable {...props}
+                setQtyRange={(val) => qtyRangeRef.current = val.trim()}
+            />
             <div className="pt-2">
                 <div className="italic font-extralight">{signature}</div>
                 <div>For {billDetails.companyName}</div>

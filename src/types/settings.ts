@@ -35,4 +35,5 @@ export interface companyInfo {
 export interface BillSettings {
     customerNames?: string[],
     address?: string[],
+    qtyRange?: RangeSet
 }

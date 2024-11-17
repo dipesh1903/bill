@@ -1,6 +1,6 @@
 import moment from "moment";
 import { BillFE } from "../types/bill";
-import { companyInfo, InvoiceSettings, RangeSet } from "../types/settings";
+import { BillSettings, companyInfo, InvoiceSettings, RangeSet } from "../types/settings";
 import { getRandomInteger } from "./utility";
 import { generateBill } from "./generateBill";
 
@@ -12,19 +12,20 @@ export function generateInvoices(
     companyInfo: companyInfo,
     invoiceSettings: InvoiceSettings,
     gstNo: string,
-    address: string[],
-    customerNames: string[]
+    billSettings: BillSettings
 ): BillFE[] {
 
     let serialTrack = serialNo;
     let dateTrack = moment(startDate);
     let dateCount = moment(endDate).diff(moment(startDate), 'days') + 1;
     const result: BillFE[] = [];
-
+    const customerNames = billSettings?.customerNames || invoiceSettings.customerNames;
+    const address = billSettings?.address || [companyInfo.district];
+    const qtyRange = billSettings?.qtyRange || invoiceSettings.rangeValue;
     while(dateCount > 0) {
         let index = getRandomInteger(billPerDay);
         while (index > 0) {
-            const bill = generateBill(invoiceSettings);
+            const bill = generateBill({...invoiceSettings, rangeValue: qtyRange});
             result.push({
                 serialNo: serialTrack,
                 date: dateTrack.toDate(),

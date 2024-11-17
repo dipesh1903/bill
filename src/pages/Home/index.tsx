@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import { InputLabel } from "../../components/ui/input-label";
 import { useForm } from "react-hook-form";
 import { useContextDispatch, useContextStore } from "../../store/storageContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "../../components/ui/dialog";
 import TemplateBasic from "../../components/billTemplates/template-basic";
 import { previewBill } from "../../constant";
@@ -13,6 +13,8 @@ import logo from '../../assets/app-icon.svg'
 export default function HomePage() {
     const dispatch = useContextDispatch();
     const storage = useContextStore();
+    const [settingOpen , setSettingOpen] = useState(false)
+
     const {register, watch} = useForm<{switchLocalStorage: boolean}>({
         defaultValues: {
             switchLocalStorage: storage.saveToLocal
@@ -46,12 +48,13 @@ export default function HomePage() {
                             <span className="ms-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Save Locally</span>
                         </InputLabel>
                     </div>
-                    <Dialog>
-                        <DialogTrigger>
+                    <Dialog open={settingOpen} onOpenChange={setSettingOpen}>
+                        <DialogTrigger onClick={() => setSettingOpen(true)}>
                             <GearIcon height={20} width={20} className="hover:bg-surface-low rounded-full"></GearIcon>
                         </DialogTrigger>
                         <DialogContent>
                             <TemplateBasic
+                            onSave={() => setSettingOpen(false)}
                             signature={'signature'}
                             isPreview={true}
                             billDetails={previewBill as unknown as BillFE}

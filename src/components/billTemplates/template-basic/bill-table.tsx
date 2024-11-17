@@ -1,12 +1,26 @@
+import { useContextStore } from "../../../store/storageContext";
 import { BillFE } from "../../../types/bill"
 import { getAmountAndPaisa } from "../../../utils/utility";
+import { InputLabel } from "../../ui/input-label";
+import { TextInput } from "../../ui/input-string";
 type props = {
     billDetails: BillFE,
     cgst: number,
-    sgst: number
+    sgst: number,
+    isPreview?: boolean
+    setQtyRange: (val: string) => void
 }
 
-export default function BillTable({billDetails, cgst, sgst}: props) {
+export default function BillTable({billDetails, cgst, sgst, isPreview, setQtyRange}: props) {
+    const storage = useContextStore();
+    let qtyRange = '';
+    if (storage?.settings?.qtyRange) {
+        const {
+            max, min
+        } = storage.settings.qtyRange
+        qtyRange = [min, max].join(',');
+    }
+
     let totalRef = billDetails.bill.reduce((acc, bill) => acc + (Math.round(+bill.quantity * +bill.rate) * 100 / 100), 0)
     
     const sgstAmt = Math.round((+sgst / 100)*totalRef * 100) / 100;
@@ -34,7 +48,18 @@ export default function BillTable({billDetails, cgst, sgst}: props) {
                 const [rupees, paisa] = getAmountAndPaisa(+bill.rate * +bill.quantity);
                 return (
                 <tr key={index} className="">
-                    <td className="border-black whitespace-nowrap  border-r-2 px-6 py-2">{bill.quantity}<span>{bill.qty}</span></td>
+                    <td className="border-black whitespace-nowrap  border-r-2 px-6 py-2"> 
+                        {
+                            isPreview ?
+                            <div className="flex flex-col">
+                                <InputLabel>Qty Range</InputLabel>
+                                <TextInput placeholder="(50,70)"
+                                defaultValue={qtyRange}
+                                onChange={(e) => setQtyRange(e.target.value)}/>
+                            </div> 
+                             : <span>{bill.quantity}</span>
+                        }
+                        <span className="pl-1">{bill.qty}</span></td>
                     <td className="border-black  border-r-2 px-6 py-2 flex-1">{bill.productName}</td>
                     <td className="border-black whitespace-nowrap  border-r-2 px-3 py-2">{bill.hsnCode}</td>
                     <td className="border-black whitespace-nowrap  border-r-2 px-1 py-2">{bill.rate}</td>
