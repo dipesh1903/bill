@@ -52,7 +52,7 @@ export default function HomePage() {
                         <DialogTrigger onClick={() => setSettingOpen(true)}>
                             <GearIcon height={20} width={20} className="hover:bg-surface-low rounded-full"></GearIcon>
                         </DialogTrigger>
-                        <DialogContent>
+                        <DialogContent className="max-sm:w-[80vw] max-sm:h-[80vh]">
                             <TemplateBasic
                             onSave={() => setSettingOpen(false)}
                             signature={'signature'}
